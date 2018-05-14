@@ -55,8 +55,8 @@ cp ./harbor/docker-compose.clair.yml ./harbor/docker-compose.clair.yml.orig
 cp ./harbor/harbor.cfg ./harbor/harbor.cfg.orig
 
 #fix config to use mac hostname
-HOSTNAME=hostname
-sed -i.bak 's/hostname = reg\.mydomain\.com/hostname = ${HOSTNAME}/g' ./harbor/harbor.cfg
+HOSTNAME=`hostname`
+sed -i.bak "s/hostname = reg\.mydomain\.com/hostname = ${HOSTNAME}/g" ./harbor/harbor.cfg
 
 #fix docker-compose.yml to use ./dev/var and ./dev/data instead of /var and /data
 sed -i.bak 's/- \/data/- ..\/dev\/data/g' ./harbor/docker-compose.yml
