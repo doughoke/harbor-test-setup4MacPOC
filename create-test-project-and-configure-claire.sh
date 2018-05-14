@@ -1,3 +1,5 @@
+###IN PROGRESS DO NOT USE!!!
+
 curl -i -k -u admin:Harbor12345 http://localhost/service/token?account=admin\&service=harbor-registry\&scope=repository:library/mysql/5.6.35:pull,push
 
 
@@ -19,3 +21,7 @@ curl -k -v -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXA
 http://localhost/api/
 
 curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ "project_name": "test-project", "metadata": { "public": 0, "enable_content_trust": true, "prevent_vulnerable_images_from_running": true, "prevent_vulnerable_images_from_running_severity": "MEDIUM", "automatically_scan_images_on_push": true } }' 'http://localhost/api/projects'
+
+
+
+curl -X POST "http://localhost/api/projects" -H "accept: text/plain" -H "Content-Type: application/json" -H "BearerToken Stuff" -d "{ "project_name": "rest", "metadata": { "public": 0, "enable_content_trust": true, "prevent_vulnerable_images_from_running": true, "prevent_vulnerable_images_from_running_severity": "MEDIUM", "automatically_scan_images_on_push": true }}"
