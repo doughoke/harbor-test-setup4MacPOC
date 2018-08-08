@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #DEBUG unset comment on "set -x"
-#set -x
+set -x
 set -e
 
 # installAndConfigureHarbor_POC_onMac.sh
@@ -23,7 +23,7 @@ set -e
 # Runs in current working directory but will create a ./dev/ folder for docker VOLUMES
 
 #example download URL https://storage.googleapis.com/harbor-releases/release-1.5.0/harbor-online-installer-v1.5.0.tgz
-HARBOR_VERSION="1.5.0"
+HARBOR_VERSION="1.5.2"
 
 echo "checking for docker..."
 if [ ! 'docker --version | grep -q Docker' ] 
