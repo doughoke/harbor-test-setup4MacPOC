@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #DEBUG unset comment on "set -x"
-set -x
+#set -x
 set -e
 
 # installAndConfigureHarbor_POC_onMac.sh
@@ -42,7 +42,7 @@ fi
 echo "python 2.7 exists"
 
 echo "downloading harbor online installer - you will need internet access"
-curl https://storage.googleapis.com/harbor-releases/release-${HARBOR_VERSION}/harbor-online-installer-v${HARBOR_VERSION}.tgz -o ./harbor-online-installer-v${HARBOR_VERSION}.tgz
+curl https://storage.googleapis.com/harbor-releases/harbor-online-installer-v${HARBOR_VERSION}.tgz -o ./harbor-online-installer-v${HARBOR_VERSION}.tgz
 echo "download complete"
 
 echo "untarring harbor"
@@ -57,6 +57,13 @@ cp ./harbor/harbor.cfg ./harbor/harbor.cfg.orig
 #fix config to use mac hostname
 HOSTNAME=`hostname`
 sed -i.bak "s/hostname = reg\.mydomain\.com/hostname = ${HOSTNAME}/g" ./harbor/harbor.cfg
+#update location for secretkey - looks like install.sh is trying to look for this before starting the harbor
+secretkey_path_modified=$(pwd)/dev/data
+echo ${secretkey_path_modified}
+sed -i.bK2 "s~secretkey_path = \/data~secretkey_path = $secretkey_path_modified~g" ./harbor/harbor.cfg
+
+
+mkdir -p dev/data
 
 #fix docker-compose.yml to use ./dev/var and ./dev/data instead of /var and /data
 sed -i.bak 's/- \/data/- ..\/dev\/data/g' ./harbor/docker-compose.yml
@@ -69,6 +76,14 @@ echo "Installing vmware harbor at version ${HARBOR_VERSION}"
 echo "--after installation system will be shutdown and docker-composed up after securitykey is updated"
 echo "....."
 echo ""
+
+if [ ! -f ./dev/data/secretkey ]; then
+    echo "secretkey is a folder lol - let's change that"
+    echo ""
+    echo "..."
+    rm -rf ./dev/data/secretkey
+    echo "123456789ABCDEF" > dev/data/secretkey
+fi
 
 #for those curious this is the command to config and start harbor - ./harbor/install.sh --with-clair
 #Start and wait for output...
@@ -91,19 +106,11 @@ do
     fi
     echo "."
 done
+#removed for 1.5.x changes
+#docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml down
 
-docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml down
-
-if [ ! -f ./dev/data/secretkey ]; then
-    echo "secretkey is a folder lol - let's change that"
-    echo ""
-    echo "..."
-    rm -rf ./dev/data/secretkey
-    echo "123456789ABCDEF" > ./dev/data/secretkey
-fi
-
-echo "restarting harbor Please wait a bit"
-docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml up
+#echo "restarting harbor Please wait a bit"
+#docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml up
 
 
 
