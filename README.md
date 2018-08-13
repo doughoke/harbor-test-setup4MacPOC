@@ -19,11 +19,12 @@ git clone https://github.com/doughoke/harbor-test-setup4MacPOC.git
 ```
 
 ### Notes
-- Don't fret when you see "WARNING: no logs are available with the 'syslog' log driver"
-THERE IS NOTHING WRONG vmware team made a logging server that listens to your logs
+- Don't fret when you see "WARNING: no logs are available with the 'syslog' log driver" in you terminal
+THERE IS NOTHING WRONG!!! vmware team made a logging server that listens to your logs
 
 - Look for logs in dev/var/log/harbor
 - access http://localhost/harbor from cloned location
+- I like to use tail -f * and watch all the logs fly by when debugging
 
 ### Login with
 
@@ -31,6 +32,13 @@ THERE IS NOTHING WRONG vmware team made a logging server that listens to your lo
 | ------ | ------ |
 | user |  admin |
 | passowrd  |  Harbor12345 |
+
+### To Test
+Login to the repository docker login <yourmachinename>
+docker tag SOURCE_IMAGE[:TAG] <yourmachinename>/library/IMAGE[:TAG]
+docker push <yourmachinename>/library/IMAGE[:TAG]
+
+- Look at https://github.com/goharbor/harbor/blob/master/docs/user_guide.md for help on understanding Harbor
 
 ## TO-DO
 create a test project automatically with clair enabled and pull sample images (some good and some bad) to prove clair integrations with harbor.
