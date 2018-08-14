@@ -40,5 +40,12 @@ docker push <yourmachinename>/library/IMAGE[:TAG]
 
 - Look at https://github.com/goharbor/harbor/blob/master/docs/user_guide.md for help on understanding Harbor
 
+### When You Are DONE
+Simply clean up
+
+docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml down
+
+
 ## TO-DO
 create a test project automatically with clair enabled and pull sample images (some good and some bad) to prove clair integrations with harbor.
+create a script to shut down harbor and clean up all directories.

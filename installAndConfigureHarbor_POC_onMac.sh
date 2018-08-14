@@ -106,6 +106,8 @@ do
     fi
     echo "."
 done
+
+echo "YOU ARE AWESOME HAVE FUN!!!!!!!!"
 #removed for 1.5.x changes
 #docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml down
 
