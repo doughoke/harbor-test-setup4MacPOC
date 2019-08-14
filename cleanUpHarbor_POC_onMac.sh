@@ -28,7 +28,7 @@ echo "------------------"
 while true; do
     read -p "Do you wish to remove Harbor?" yn
     case $yn in
-        [Yy]* ) echo "uninstalling harbor please wait..."  && echo "Shutting down" && docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml down && echo "delete artifacts afterwards ./dev, ./harbor tgz file and startup log"; break;;
+        [Yy]* ) echo "uninstalling harbor please wait..."  && echo "Shutting down" && docker-compose -f ./harbor/docker-compose.yml down && echo "delete artifacts afterwards ./dev, ./harbor tgz file and startup log"; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #DEBUG unset comment on "set -x"
-#set -x
+set -x
 set -e
 
 # installAndConfigureHarbor_POC_onMac.sh
@@ -22,8 +22,9 @@ set -e
 #
 # Runs in current working directory but will create a ./dev/ folder for docker VOLUMES
 
-#example download URL https://storage.googleapis.com/harbor-releases/release-1.5.0/harbor-online-installer-v1.5.0.tgz
-HARBOR_VERSION="1.5.2"
+#example download URL https://storage.googleapis.com/harbor-releases/release-1.8.0/harbor-online-installer-v1.8.1.tgz
+HARBOR_VERSION="1.8.2"
+HARBOR_BASE_VERSION=`echo "$HARBOR_VERSION" | awk -F '.' '{print $1"."$2".0"}'`
 
 echo "checking for docker..."
 if [ ! 'docker --version | grep -q Docker' ] 
@@ -42,48 +43,50 @@ fi
 echo "python 2.7 exists"
 
 echo "downloading harbor online installer - you will need internet access"
-curl https://storage.googleapis.com/harbor-releases/harbor-online-installer-v${HARBOR_VERSION}.tgz -o ./harbor-online-installer-v${HARBOR_VERSION}.tgz
+curl https://storage.googleapis.com/harbor-releases/release-${HARBOR_BASE_VERSION}/harbor-online-installer-v${HARBOR_VERSION}.tgz -o ./harbor-online-installer-v${HARBOR_VERSION}.tgz
 echo "download complete"
 
 echo "untarring harbor"
 tar -xvzf harbor-online-installer-v${HARBOR_VERSION}.tgz
 echo "harbor exploded - chown group to default staff for Mac"
 
-echo "updating docker-compose files for ./dev"
-cp ./harbor/docker-compose.yml ./harbor/docker-compose.yml.orig
-cp ./harbor/docker-compose.clair.yml ./harbor/docker-compose.clair.yml.orig
-cp ./harbor/harbor.cfg ./harbor/harbor.cfg.orig
+echo "updating harbor config files for ./dev"
+cp ./harbor/harbor.yml ./harbor/harbor.yml.orig
+#cp ./harbor/docker-compose.yml ./harbor/docker-compose.yml.orig
+#cp ./harbor/docker-compose.clair.yml ./harbor/docker-compose.clair.yml.orig
+#cp ./harbor/harbor.cfg ./harbor/harbor.cfg.orig
 
 #fix config to use mac hostname
 HOSTNAME=`hostname`
-sed -i.bak "s/hostname = reg\.mydomain\.com/hostname = ${HOSTNAME}/g" ./harbor/harbor.cfg
+sed -i.bak "s/hostname: reg\.mydomain\.com/hostname: ${HOSTNAME}/g" ./harbor/harbor.yml
 #update location for secretkey - looks like install.sh is trying to look for this before starting the harbor
-secretkey_path_modified=$(pwd)/dev/data
-echo ${secretkey_path_modified}
-sed -i.bK2 "s~secretkey_path = \/data~secretkey_path = $secretkey_path_modified~g" ./harbor/harbor.cfg
+#secretkey_path_modified=$(pwd)/dev/data
+#echo ${secretkey_path_modified}
+#sed -i.bK2 "s~secretkey_path = \/data~secretkey_path = $secretkey_path_modified~g" ./harbor/harbor.cfg
 
 
 mkdir -p dev/data
 
 #fix docker-compose.yml to use ./dev/var and ./dev/data instead of /var and /data
-sed -i.bak 's/- \/data/- ..\/dev\/data/g' ./harbor/docker-compose.yml
-sed -i.bak 's/- \/var/- ..\/dev\/var/g' ./harbor/docker-compose.yml
 
-sed -i.bak 's/- \/data/- ..\/dev\/data/g' ./harbor/docker-compose.clair.yml
-sed -i.bak 's/- \/var/- ..\/dev\/var/g' ./harbor/docker-compose.clair.yml
+sed -i.bak "s~data_volume: /data~data_volume: $(pwd)/dev/data~g" ./harbor/harbor.yml
+#sed -i.bak "s/- \/var/- $(pwd)\/dev\/var/g" ./harbor/harbor.yml
+sed -i.bak "s~location: /var/log/harbor~location: $(pwd)/dev/var/log/harbor~g" ./harbor/harbor.yml
+#sed -i.bak 's/- \/data/- ..\/dev\/data/g' ./harbor/docker-compose.clair.yml
+#sed -i.bak 's/- \/var/- ..\/dev\/var/g' ./harbor/docker-compose.clair.yml
 
 echo "Installing vmware harbor at version ${HARBOR_VERSION}"
-echo "--after installation system will be shutdown and docker-composed up after securitykey is updated"
-echo "....."
-echo ""
+#echo "--after installation system will be shutdown and docker-composed up after securitykey is updated"
+#echo "....."
+#echo ""
 
-if [ ! -f ./dev/data/secretkey ]; then
-    echo "secretkey is a folder lol - let's change that"
-    echo ""
-    echo "..."
-    rm -rf ./dev/data/secretkey
-    echo "123456789ABCDEF" > dev/data/secretkey
-fi
+#if [ ! -f ./dev/data/secretkey ]; then
+#    echo "secretkey is a folder lol - let's change that"
+#    echo ""
+#    echo "..."
+#    rm -rf ./dev/data/secretkey
+#    echo "123456789ABCDEF" > dev/data/secretkey
+#fi
 
 #for those curious this is the command to config and start harbor - ./harbor/install.sh --with-clair
 #Start and wait for output...
@@ -95,17 +98,17 @@ retryseconds=10
 ${command} > "${log}" 2>&1 &
 pid=$!
 
-echo "waiting for completion... run tail -f harbor-startup.log in another shell if curious."
+#echo "waiting for completion... run tail -f harbor-startup.log in another shell if curious."
 
-while sleep ${retryseconds}
-do
-    if grep -q "${matchstartstring}" "${log}" ;
-    then
-        echo "harbor started but with with bugs"
-        break
-    fi
-    echo "."
-done
+#while sleep ${retryseconds}
+#do
+#    if grep -q "${matchstartstring}" "${log}" ;
+#    then
+#        echo "harbor started but with with bugs"
+#        break
+#    fi
+#    echo "."
+#done
 
 echo "YOU ARE AWESOME HAVE FUN!!!!!!!!"
 #removed for 1.5.x changes

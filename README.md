@@ -45,6 +45,8 @@ Simply clean up
 
 docker-compose -f ./harbor/docker-compose.clair.yml -f ./harbor/docker-compose.yml down
 
+or call ./cleanUpHarbor_POC_onMac.sh
+
 
 ## TO-DO
 create a test project automatically with clair enabled and pull sample images (some good and some bad) to prove clair integrations with harbor.
