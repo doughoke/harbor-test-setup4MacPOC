@@ -1,3 +1,5 @@
+# archiving - just use the helm chart https://github.com/goharbor/harbor-helm on a local kubs of your choice.
+
 # harbor-test-setup4MacPOC
 Creates a POC version of vmWare Harbor on Mac
 
